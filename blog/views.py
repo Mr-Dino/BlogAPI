@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.response import Response
-
+from django.db.models import Q
 from .models import Post, Comment
 from .serializers import PostCreateSerializer, CommentCreateSerializer
 
@@ -11,7 +11,7 @@ from .serializers import PostCreateSerializer, CommentCreateSerializer
 def get_post_comments(request, post_id):
     """Получение комментариев до 4 уровня (не включительно)"""
     post = Post.objects.get(id=post_id)
-    comments = Comment.objects.filter(post=post_id, level__lt=4)
+    comments = Comment.objects.filter(Q(post=post_id) & Q(level__lt=4))
     all_data = []
     json_data = {"count": len(comments) + 1}
     all_data.append(post.get_dict())
@@ -42,7 +42,7 @@ def get_all_comments(request, comment_id):
     генератор будет постоянно обращаться в базу и соответственно количество запросов возрастет
     """
     main_comment = Comment.objects.get(pk=comment_id)
-    comments = Comment.objects.filter(post=main_comment.post, level__gt=3).order_by('-level')
+    comments = Comment.objects.filter(Q(post=main_comment.post) & Q(level__gt=3)).order_by('-level')
     all_data = []
     json_data = {}
     max_lvl, has_next = get_max_level(comments, main_comment.id)
