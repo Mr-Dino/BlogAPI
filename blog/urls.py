@@ -3,8 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("api/comments/", views.APIComments.as_view(), name="api_comments"),
-    #path("api/posts/", views.api_posts, name="api_posts"),
-    #path("api/rubric/<int:pk>/", views.api_post_detail, name="api_post_detail"),
-    #path("api/comment/<int:pk>/", views.api_comment_detail, name="api_comment_detail"),
+    path("api/post/<int:post_id>/", views.get_post_comments, name="comments_to_post"),
+    path("api/create/post/", views.create_post, name="post_create"),
+    path("api/create/comment/", views.create_comment, name="comment_to_post"),
+    path("api/comment/<int:comment_id>/", views.get_all_comments, name="comment_comments"),
 ]
+
